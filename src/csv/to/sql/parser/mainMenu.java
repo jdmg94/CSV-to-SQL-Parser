@@ -51,6 +51,7 @@ public class mainMenu extends javax.swing.JFrame {
         lblTitulo = new javax.swing.JLabel();
         lblFile = new javax.swing.JLabel();
         btnHelp = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,21 +85,27 @@ public class mainMenu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addComponent(lblTitulo))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(btnOpenFile)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnHelp)
+                            .addComponent(btnParse)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(btnOpenFile))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(lblTitulo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(145, 145, 145)
-                        .addComponent(lblFile)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnHelp)
-                    .addComponent(btnParse))
+                        .addGap(143, 143, 143)
+                        .addComponent(lblFile)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jSeparator1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -111,9 +118,11 @@ public class mainMenu extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnHelp)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                .addComponent(lblFile)
                 .addGap(27, 27, 27)
+                .addComponent(lblFile)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOpenFile)
                     .addComponent(btnParse))
@@ -144,7 +153,7 @@ public class mainMenu extends javax.swing.JFrame {
     private void btnParseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParseActionPerformed
         // TODO add your handling code here:
         String filePath = this.selectedFile.getPath();
-        filePath = filePath.replace(this.selectedFile.getName(), "");
+        filePath = filePath.replace(".csv", " ");
         File resultFile = new File(this.validFilePath(filePath+"csvTo.sql"));
        
         BufferedReader br = null;
@@ -157,13 +166,13 @@ public class mainMenu extends javax.swing.JFrame {
                 
                 br = new BufferedReader(new FileReader(this.selectedFile));
                 bw = new BufferedWriter(new FileWriter(resultFile));
-                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+this.formatFields(br.readLine()).replace('"','`')+" VALUES\n");
+                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+" ("+this.formatFields(br.readLine()).replace('"','`')+") VALUES\n");
                 LineIterator it = new LineIterator(br);
                 boolean lineStatus = it.hasNext();
                 while(lineStatus){
                     currLine = it.next();
                     
-                    bw.write(this.formatFields(currLine)+((lineStatus = it.hasNext())?",\n":";"));
+                    bw.write("("+this.formatFields(currLine)+")"+((lineStatus = it.hasNext())?",\n":";"));
                 }
                 this.resultOk = true;
             }
@@ -266,6 +275,7 @@ public class mainMenu extends javax.swing.JFrame {
     private javax.swing.JButton btnHelp;
     private javax.swing.JButton btnOpenFile;
     private javax.swing.JButton btnParse;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblFile;
     private javax.swing.JLabel lblTitulo;
     // End of variables declaration//GEN-END:variables
