@@ -24,7 +24,7 @@ import org.apache.commons.io.LineIterator;
  */
 public class mainMenu extends javax.swing.JFrame {
 
-    private boolean fileSelected;
+    private boolean fileSelected,resultOk;
     private File selectedFile;
     
     /**
@@ -34,6 +34,7 @@ public class mainMenu extends javax.swing.JFrame {
         initComponents();
         
         this.fileSelected = false;
+        this.resultOk = false;
     }
 
     /**
@@ -134,6 +135,9 @@ public class mainMenu extends javax.swing.JFrame {
             this.btnOpenFile.setEnabled(false);
             this.btnParse.setEnabled(true);
         }
+        else{
+            JOptionPane.showInternalMessageDialog(this, "The file doesn't exists!");
+        }
         
     }//GEN-LAST:event_btnOpenFileActionPerformed
 
@@ -141,7 +145,8 @@ public class mainMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         String filePath = this.selectedFile.getPath();
         filePath = filePath.replace(this.selectedFile.getName(), "");
-        File resultFile = new File(filePath+"csvTo.sql");
+        File resultFile = new File(this.validFilePath(filePath+"csvTo.sql"));
+       
         BufferedReader br = null;
         BufferedWriter bw = null;
         try {
@@ -152,16 +157,18 @@ public class mainMenu extends javax.swing.JFrame {
                 
                 br = new BufferedReader(new FileReader(this.selectedFile));
                 bw = new BufferedWriter(new FileWriter(resultFile));
-                
-                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+" ("+br.readLine().replace('"', '`')+") VALUES\n");
+                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+this.formatFields(br.readLine()).replace('"','`')+" VALUES\n");
                 LineIterator it = new LineIterator(br);
                 boolean lineStatus = it.hasNext();
                 while(lineStatus){
                     currLine = it.next();
-                    bw.write("("+currLine.substring(0, currLine.length())+")"+((lineStatus = it.hasNext())?",\n":";"));
-                }   
+                    
+                    bw.write(this.formatFields(currLine)+((lineStatus = it.hasNext())?",\n":";"));
+                }
+                this.resultOk = true;
             }
         } catch (IOException ex) {
+            this.resultOk = false;
             System.out.println("Error al crear el archivo: "+ex.getMessage());
         }
         finally{
@@ -173,7 +180,8 @@ public class mainMenu extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(mainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-            JOptionPane.showMessageDialog(this, "Parse Successful!");
+            
+            JOptionPane.showMessageDialog(this, "Parse "+(this.resultOk?"Successful!":"Error!"));
            
             this.selectedFile = null;
             this.lblFile.setText("No File Selected!");
@@ -184,6 +192,36 @@ public class mainMenu extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnParseActionPerformed
 
+    private String validFilePath(String path){
+        return this.validFilePath(path, 0);
+    }
+    
+    private String validFilePath(String path, int index){
+        if(new File(path).exists()){
+            path = path.substring(0, path.length()-(4+(index != 0?2:0)+(index>9?1:0))).concat(" "+index+".sql");
+            return  this.validFilePath(path,index+1);
+        }
+        return path;
+    }
+    
+    private String formatFields(String line){
+        if(line.contains(",")){
+            String[] Data = null;
+            StringBuilder resultado = new StringBuilder();
+        
+            resultado.append("(");
+            Data = line.split(",");
+            for(String currLine : Data){
+                resultado.append(currLine);
+                resultado.append(",");
+            }
+            resultado.deleteCharAt(resultado.length()-1).append(")");
+            return resultado.toString();
+        }
+        
+        return line;
+    }
+    
     private void btnHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHelpActionPerformed
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(this, "Hello! Thank you for using csv to sql parser\nHere are a few instructions on how to use this tool:\n1: name your CSV file to the target sql table\n2: Make sure the first row in the CSV file has the column names\n\tof the target SQL table and wrap each one on quote(\") tags");
