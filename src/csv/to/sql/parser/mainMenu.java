@@ -224,7 +224,7 @@ public class mainMenu extends javax.swing.JFrame {
     
     private void btnHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHelpActionPerformed
         // TODO add your handling code here:
-        JOptionPane.showMessageDialog(this, "Hello! Thank you for using csv to sql parser\nHere are a few instructions on how to use this tool:\n1: name your CSV file to the target sql table\n2: Make sure the first row in the CSV file has the column names\n\tof the target SQL table and wrap each one on quote(\") tags");
+        JOptionPane.showMessageDialog(this, "Hello! Thank you for using csv to sql parser v0.1.2\nHere are a few instructions on how to use this tool:\n1: name your CSV file to the target sql table\n2: Make sure the first row in the CSV file has the column names\n\tof the target SQL table and wrap each one on quote(\") tags");
     }//GEN-LAST:event_btnHelpActionPerformed
 
     /**
