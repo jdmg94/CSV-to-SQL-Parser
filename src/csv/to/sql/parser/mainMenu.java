@@ -166,13 +166,13 @@ public class mainMenu extends javax.swing.JFrame {
                 
                 br = new BufferedReader(new FileReader(this.selectedFile));
                 bw = new BufferedWriter(new FileWriter(resultFile));
-                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+" ("+this.formatFields(br.readLine()).replace('"','`')+") VALUES\n");
+                bw.write("INSERT INTO "+this.selectedFile.getName().replace(".csv", "")+"  "+this.formatFields(br.readLine()).replace('"','`')+" VALUES\n");
                 LineIterator it = new LineIterator(br);
                 boolean lineStatus = it.hasNext();
                 while(lineStatus){
                     currLine = it.next();
                     
-                    bw.write("("+this.formatFields(currLine)+")"+((lineStatus = it.hasNext())?",\n":";"));
+                    bw.write(this.formatFields(currLine)+((lineStatus = it.hasNext())?",\n":";"));
                 }
                 this.resultOk = true;
             }
@@ -207,7 +207,11 @@ public class mainMenu extends javax.swing.JFrame {
     
     private String validFilePath(String path, int index){
         if(new File(path).exists()){
-            path = path.substring(0, path.length()-(4+(index != 0?2:0)+(index>9?1:0))).concat(" "+index+".sql");
+            int count = 4;
+            while((index/=10) > 0){
+               count +=1;
+            }
+            path = path.substring(0, path.length()-(count)).concat(" "+index+".sql");
             return  this.validFilePath(path,index+1);
         }
         return path;
